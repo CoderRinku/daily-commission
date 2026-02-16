@@ -28,10 +28,11 @@
 
         /* Connection Status Dot */
         .status-dot {
-            height: 10px;
-            width: 10px;
+            height: 8px;
+            width: 8px;
             border-radius: 50%;
             display: inline-block;
+            margin-right: 5px;
         }
     </style>
 </head>
@@ -40,8 +41,9 @@
 
     <div class="min-h-screen flex flex-col items-center max-w-4xl mx-auto bg-white shadow-xl min-h-screen relative">
 
-        <button onclick="openSettings()" class="absolute top-4 right-4 z-50 text-white/80 hover:text-white p-2">
-            <i class="fas fa-cog"></i>
+        <button onclick="openSettings()"
+            class="absolute top-5 right-5 z-50 text-white/90 hover:text-white bg-white/20 hover:bg-white/30 p-2 rounded-full transition-all">
+            <i class="fas fa-cog text-lg"></i>
         </button>
 
         <header
@@ -51,7 +53,7 @@
                     <h1 class="text-sm font-medium opacity-90">আজকের মোট কমিশন (লাভ)</h1>
                     <div class="text-4xl font-bold mt-1">৳ <span id="total-commission">0.00</span></div>
                 </div>
-                <div class="text-right mr-6">
+                <div class="text-right mr-8">
                     <p class="text-xs opacity-80">মোট লেনদেন</p>
                     <p class="font-bold text-lg">৳ <span id="total-amount">0</span></p>
                 </div>
@@ -62,9 +64,10 @@
                     <span><i class="fas fa-list"></i> এন্ট্রি: <span id="txn-count">0</span>টি</span>
                 </div>
 
-                <div id="conn-status" class="text-xs bg-white/20 px-2 py-1 rounded-full flex items-center gap-2 hidden">
+                <div id="conn-status"
+                    class="hidden text-xs bg-green-500/20 text-white border border-green-400/30 px-3 py-1 rounded-full flex items-center">
                     <span class="status-dot bg-green-400"></span>
-                    <span id="conn-id-display">Live</span>
+                    <span id="conn-id-display" class="font-bold">Connected</span>
                 </div>
             </div>
         </header>
@@ -141,28 +144,37 @@
         </main>
     </div>
 
-    <div id="settings-modal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-sm">
-            <h3 class="font-bold text-lg mb-4 text-gray-700">অ্যাডমিন কানেকশন</h3>
-            <p class="text-xs text-gray-500 mb-2">আপনার ডাটা লাইভ সিঙ্ক করতে সিক্রেট আইডি দিন। পাবলিক ইউজারদের এটি দরকার
-                নেই।</p>
-
-            <input type="text" id="secret-id-input" placeholder="Secret ID (e.g. USER01)"
-                class="w-full border p-3 rounded-lg mb-4 bg-gray-50">
-
-            <div class="flex justify-end gap-3">
-                <button onclick="closeSettings()" class="text-gray-500 font-bold px-4 py-2">বন্ধ করুন</button>
-                <button onclick="saveSettings()" class="bg-blue-600 text-white font-bold px-4 py-2 rounded-lg">সেভ
-                    করুন</button>
+    <div id="settings-modal"
+        class="fixed inset-0 bg-black/60 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm transition-all">
+        <div class="bg-white rounded-2xl p-6 w-full max-w-sm shadow-2xl transform scale-100 transition-transform">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg text-gray-700"><i
+                        class="fas fa-user-shield text-blue-600 mr-2"></i>অ্যাডমিন কানেকশন</h3>
+                <button onclick="closeSettings()" class="text-gray-400 hover:text-red-500"><i
+                        class="fas fa-times"></i></button>
             </div>
+
+            <p class="text-xs text-gray-500 mb-4 bg-blue-50 p-3 rounded-lg border border-blue-100">
+                পাবলিক ইউজারদের জন্য এই সেটিং দরকার নেই। যদি আপনি অ্যাডমিন হন এবং ডাটা মনিটর করতে চান, তবে আপনার সিক্রেট
+                আইডি দিন।
+            </p>
+
+            <label class="text-xs font-bold text-gray-600 mb-1 block">আপনার সিক্রেট আইডি (Secret ID)</label>
+            <input type="text" id="secret-id-input" placeholder="যেমন: USER_01"
+                class="w-full border-2 border-gray-200 p-3 rounded-xl mb-4 text-gray-700 focus:outline-none focus:border-blue-500 font-bold">
+
+            <button onclick="saveSettings()"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl shadow-lg transition-colors">
+                সেভ করুন এবং কানেক্ট করুন
+            </button>
         </div>
     </div>
 
     <script>
         // ============================================
-        // CONFIGURATION (CHANGE THIS URL)
+        // YOUR GOOGLE SCRIPT URL
         // ============================================
-        const GOOGLE_SCRIPT_URL = "এখানে_আপনার_APPS_SCRIPT_URL_বসিয়ে_দিন";
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyenmN0-7CC902JP4gFe3xi9IigWwoHHM6OohkcM-U8Sq0VeyHGI42k_koGMt2QDv2vdw/exec";
         // ============================================
 
         // State Management
@@ -198,6 +210,7 @@
         function openSettings() {
             document.getElementById('settings-modal').classList.remove('hidden');
             document.getElementById('secret-id-input').value = secretID;
+            document.getElementById('secret-id-input').focus();
         }
 
         function closeSettings() {
@@ -208,9 +221,15 @@
             const val = document.getElementById('secret-id-input').value.trim();
             secretID = val;
             localStorage.setItem('ledger_secret_id', val);
-            closeSettings();
+
             updateConnectionStatus();
-            alert("আইডি সেভ হয়েছে! এখন ডাটা অ্যাডমিনের কাছে যাবে।");
+            closeSettings();
+
+            if (val) {
+                alert("✅ কানেক্টেড! এখন আপনার ডাটা গুগল শিটে সেভ হবে।");
+            } else {
+                alert("❌ ডিসকানেক্টেড! ডাটা শুধু আপনার ফোনেই থাকবে।");
+            }
         }
 
         function updateConnectionStatus() {
@@ -219,7 +238,7 @@
 
             if (secretID) {
                 statusDiv.classList.remove('hidden');
-                statusText.innerText = secretID;
+                statusText.innerText = secretID; // Show the ID (e.g., USER_01)
             } else {
                 statusDiv.classList.add('hidden');
             }
@@ -244,7 +263,7 @@
                 body: JSON.stringify(payload)
             }).then(() => {
                 console.log("Sent to Admin Sheet");
-            }).catch(err => console.error(err));
+            }).catch(err => console.error("Error sending to sheet:", err));
         }
 
         // Core Transaction Logic
@@ -276,10 +295,10 @@
 
             transactions.unshift(newTxn);
 
-            // 1. Local Save
+            // 1. Local Save (সবার জন্য)
             saveAndRender();
 
-            // 2. Cloud Save (Only if User has ID)
+            // 2. Cloud Save (শুধুমাত্র যদি Secret ID থাকে)
             sendToCloud(newTxn);
 
             amountInput.value = '';
