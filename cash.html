@@ -16,20 +16,69 @@
             background-color: #f0f2f5;
         }
 
-        /* Card Focus Effect */
         .cash-card:focus-within {
             transform: translateY(-3px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
             border-color: #3b82f6;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         .cash-card {
             transition: all 0.2s ease-in-out;
         }
+
+        @keyframes popIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.1);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        .congrats-box {
+            animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .expense-list::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .expense-list::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .expense-list::-webkit-scrollbar-thumb {
+            background: #fca5a5;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
-<body class="text-gray-800">
+<body class="text-gray-800 relative">
+
+    <div id="congrats-overlay"
+        class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm hidden"
+        onclick="this.classList.add('hidden')">
+        <div
+            class="congrats-box bg-white p-8 rounded-3xl text-center shadow-2xl max-w-sm mx-4 relative overflow-hidden">
+            <div class="absolute inset-0 bg-gradient-to-br from-green-50 to-blue-50 -z-10"></div>
+            <div class="text-6xl mb-4">🎉</div>
+            <h2 class="text-2xl font-bold text-green-600 mb-2">অভিনন্দন!</h2>
+            <p class="text-gray-600 mb-4">আজ আপনার ক্যাশ লাভ হয়েছে!</p>
+            <div class="text-3xl font-bold text-gray-800 bg-white/50 py-2 rounded-xl border border-green-100">
+                + ৳<span id="profit-display">0</span>
+            </div>
+            <p class="text-xs text-gray-400 mt-4">(বন্ধ করতে স্ক্রিনে ক্লিক করুন)</p>
+        </div>
+    </div>
 
     <div class="min-h-screen flex flex-col items-center max-w-4xl mx-auto bg-white shadow-xl min-h-screen relative">
 
@@ -37,16 +86,23 @@
             class="w-full bg-gradient-to-r from-slate-800 to-slate-700 text-white p-6 rounded-b-3xl shadow-lg sticky top-0 z-40">
             <div class="flex justify-between items-start">
                 <div>
-                    <h1 class="text-sm font-medium opacity-90">বর্তমান মোট ক্যাশ</h1>
-                    <div class="text-4xl font-bold mt-1 text-green-400">৳ <span id="grand-total">0</span></div>
-                </div>
+                    <h1 class="text-sm font-medium opacity-90">হাতে আছে (Physical Cash)</h1>
+                    <div class="mt-1">
+                        <span class="text-4xl font-bold text-white">৳ <span id="physical-total">0</span></span>
 
+                        <div id="header-deduction"
+                            class="hidden text-xs text-yellow-300 mt-1 font-mono bg-white/10 p-1 rounded inline-block">
+                            (- <span id="header-extra">0</span> অন্যের)
+                            <br>
+                            = আপনার: ৳ <span id="header-own" class="font-bold">0</span>
+                        </div>
+                    </div>
+                </div>
                 <a href="index.html"
                     class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full text-sm font-bold transition flex items-center gap-2 backdrop-blur-sm">
                     <i class="fas fa-home"></i> হোম
                 </a>
             </div>
-
             <div class="mt-4 text-xs opacity-80 bg-slate-900/30 p-2 rounded-lg inline-flex">
                 <span><i class="fas fa-calculator"></i> স্ট্যাটাস: <span id="status-badge">হিসাব বাকি</span></span>
             </div>
@@ -54,92 +110,143 @@
 
         <main class="w-full p-4 flex-grow overflow-y-auto pb-24">
 
-            <h3 class="text-gray-600 font-bold mb-3 ml-1 text-sm uppercase tracking-wide">ব্যালেন্স ইনপুট দিন</h3>
+            <h3 class="text-gray-600 font-bold mb-3 ml-1 text-sm uppercase tracking-wide">১. বর্তমান ব্যালেন্স (Assets)
+            </h3>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
                 <div
                     class="cash-card bg-white border border-pink-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm">
-                    <div
-                        class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 mb-2 text-xl">
-                        <i class="fas fa-mobile-alt"></i>
-                    </div>
-                    <div class="text-xs font-bold text-gray-500 mb-1">বিকাশ এজেন্ট</div>
+                    <div class="text-pink-600 mb-1 text-lg"><i class="fas fa-mobile-alt"></i></div>
+                    <div class="text-[10px] font-bold text-gray-500 mb-1">বিকাশ এজেন্ট</div>
                     <input type="number" id="bkash" oninput="calculate()" placeholder="0"
-                        class="w-full text-center font-bold text-xl text-gray-800 border-b border-pink-200 focus:outline-none focus:border-pink-500 pb-1">
+                        class="w-full text-center font-bold text-lg text-gray-800 border-b border-pink-200 focus:outline-none focus:border-pink-500">
                 </div>
-
                 <div
                     class="cash-card bg-white border border-orange-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm">
-                    <div
-                        class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-2 text-xl">
-                        <i class="fas fa-wallet"></i>
-                    </div>
-                    <div class="text-xs font-bold text-gray-500 mb-1">পার্সোনাল (নগদ/বিকাশ)</div>
+                    <div class="text-orange-600 mb-1 text-lg"><i class="fas fa-wallet"></i></div>
+                    <div class="text-[10px] font-bold text-gray-500 mb-1">পার্সোনাল</div>
                     <input type="number" id="personal" oninput="calculate()" placeholder="0"
-                        class="w-full text-center font-bold text-xl text-gray-800 border-b border-orange-200 focus:outline-none focus:border-orange-500 pb-1">
+                        class="w-full text-center font-bold text-lg text-gray-800 border-b border-orange-200 focus:outline-none focus:border-orange-500">
                 </div>
-
                 <div
                     class="cash-card bg-white border border-blue-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm">
-                    <div
-                        class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2 text-xl">
-                        <i class="fas fa-sim-card"></i>
-                    </div>
-                    <div class="text-xs font-bold text-gray-500 mb-1">GP লোড ব্যালেন্স</div>
+                    <div class="text-blue-600 mb-1 text-lg"><i class="fas fa-sim-card"></i></div>
+                    <div class="text-[10px] font-bold text-gray-500 mb-1">GP লোড</div>
                     <input type="number" id="gp" oninput="calculate()" placeholder="0"
-                        class="w-full text-center font-bold text-xl text-gray-800 border-b border-blue-200 focus:outline-none focus:border-blue-500 pb-1">
+                        class="w-full text-center font-bold text-lg text-gray-800 border-b border-blue-200 focus:outline-none focus:border-blue-500">
                 </div>
-
                 <div
                     class="cash-card bg-white border border-purple-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm">
-                    <div
-                        class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2 text-xl">
-                        <i class="fas fa-sim-card"></i>
-                    </div>
-                    <div class="text-xs font-bold text-gray-500 mb-1">BL লোড ব্যালেন্স</div>
+                    <div class="text-purple-600 mb-1 text-lg"><i class="fas fa-sim-card"></i></div>
+                    <div class="text-[10px] font-bold text-gray-500 mb-1">BL লোড</div>
                     <input type="number" id="bl" oninput="calculate()" placeholder="0"
-                        class="w-full text-center font-bold text-xl text-gray-800 border-b border-purple-200 focus:outline-none focus:border-purple-500 pb-1">
+                        class="w-full text-center font-bold text-lg text-gray-800 border-b border-purple-200 focus:outline-none focus:border-purple-500">
                 </div>
-
                 <div
-                    class="cash-card bg-white border border-green-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm col-span-2 md:col-span-4 bg-green-50/30">
-                    <div
-                        class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-2 text-2xl">
-                        <i class="fas fa-money-bill-wave"></i>
-                    </div>
-                    <div class="text-sm font-bold text-gray-600 mb-1">দোকানের ক্যাশ ড্রয়ার (Hand Cash)</div>
+                    class="cash-card bg-green-50/50 border border-green-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm col-span-2 md:col-span-4">
+                    <div class="text-green-600 mb-1 text-2xl"><i class="fas fa-money-bill-wave"></i></div>
+                    <div class="text-xs font-bold text-gray-600 mb-1">দোকানের ক্যাশ ড্রয়ার (Hand Cash)</div>
                     <input type="number" id="cash" oninput="calculate()" placeholder="0"
-                        class="w-1/2 text-center font-bold text-3xl text-green-700 border-b-2 border-green-300 focus:outline-none focus:border-green-600 pb-1 bg-transparent">
+                        class="w-1/2 text-center font-bold text-3xl text-green-700 border-b-2 border-green-300 focus:outline-none focus:border-green-600 bg-transparent">
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
-                <div class="bg-gray-50 p-3 border-b border-gray-200">
-                    <h3 class="text-gray-500 text-xs font-bold uppercase flex items-center gap-2">
-                        <i class="fas fa-balance-scale"></i> ক্যাশ মিলান (Reconciliation)
+            <h3 class="text-gray-600 font-bold mb-3 ml-1 text-sm uppercase tracking-wide mt-6">২. খরচ ও সমন্বয়
+                (Adjustments)</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+
+                <div class="cash-card bg-red-50 border border-red-100 p-3 rounded-xl relative">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center">
+                                <i class="fas fa-coffee"></i></div>
+                            <label class="text-xs font-bold text-red-600">খরচের তালিকা (+)</label>
+                        </div>
+                        <div class="text-right">
+                            <span class="text-xs text-red-400 font-bold">মোট: ৳<span
+                                    id="expense-total-display">0</span></span>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="new-exp-note" placeholder="বিবরণ"
+                            class="w-3/5 bg-white p-2 rounded-lg text-xs border border-red-200 focus:outline-none">
+                        <input type="number" id="new-exp-amount" placeholder="৳"
+                            class="w-1/4 bg-white p-2 rounded-lg text-xs font-bold border border-red-200 focus:outline-none">
+                        <button onclick="addExpense()"
+                            class="w-8 h-8 bg-red-500 text-white rounded-lg flex items-center justify-center hover:bg-red-600 shadow-md">
+                            <i class="fas fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <div class="bg-white/50 rounded-lg p-2 h-24 overflow-y-auto expense-list border border-red-100">
+                        <ul id="expense-list-ul" class="space-y-1">
+                            <li class="text-[10px] text-gray-400 text-center italic mt-4">কোনো খরচ নেই</li>
+                        </ul>
+                    </div>
+                    <input type="hidden" id="expense" value="0">
+                </div>
+
+                <div class="cash-card bg-indigo-50 border border-indigo-100 p-3 rounded-xl relative flex flex-col">
+                    <div class="flex items-center gap-2 mb-2">
+                        <div
+                            class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-500 flex items-center justify-center">
+                            <i class="fas fa-hand-holding-usd"></i></div>
+                        <label class="text-xs font-bold text-indigo-600">অন্যের টাকা বাদ দিন (-)</label>
+                    </div>
+                    <div class="flex gap-2 flex-grow items-start">
+                        <div class="w-full">
+                            <input type="number" id="extra" oninput="calculate()" placeholder="0"
+                                class="w-full bg-transparent text-3xl font-bold text-indigo-700 border-b border-indigo-200 focus:outline-none focus:border-indigo-500 mb-2">
+                            <input type="text" id="extra-note" placeholder="কার টাকা / নোট..."
+                                class="w-full bg-transparent text-sm text-gray-600 border-b border-indigo-200 focus:outline-none focus:border-indigo-500">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+                <div class="bg-slate-800 text-white p-3 border-b border-gray-200 text-center">
+                    <h3 class="text-sm font-bold uppercase tracking-widest">
+                        <i class="fas fa-file-invoice-dollar mr-1"></i> ফাইনাল হিসাব
                     </h3>
                 </div>
 
-                <div class="p-5">
-                    <div class="mb-4 relative">
-                        <label class="text-xs font-bold text-gray-500 mb-1 block">গতকালের ক্যাশ / টার্গেট
-                            এমাউন্ট</label>
+                <div class="p-5 space-y-3">
+                    <div class="mb-4 relative bg-blue-50 p-3 rounded-xl border border-blue-100">
+                        <label class="text-xs font-bold text-blue-600 mb-1 block">হিসাবের পুঁজি (Expected
+                            Capital)</label>
                         <input type="number" id="target" oninput="calculate()"
-                            class="w-full p-3 border-2 border-gray-300 rounded-xl text-xl font-bold focus:border-blue-500 focus:outline-none transition-colors"
-                            placeholder="Example: 50000">
-                        <div class="absolute right-4 top-8 text-gray-400">TK</div>
+                            class="w-full bg-transparent text-2xl font-bold text-blue-900 focus:outline-none placeholder-blue-200"
+                            placeholder="0">
+                        <p class="text-[10px] text-blue-400 mt-1">*(গতকালকের ক্যাশ + আজকের সেল)</p>
+                        <div class="absolute right-4 top-5 text-blue-300 font-bold">TK</div>
+                    </div>
+
+                    <div
+                        class="text-xs text-gray-400 flex justify-between px-2 pb-2 border-b border-dashed border-gray-300">
+                        <span>হাতে আছে: <span id="summary-physical">0</span></span>
+                        <span>(+)খরচ: <span id="summary-expense">0</span></span>
+                        <span>(-)অন্যের: <span id="summary-extra">0</span></span>
+                    </div>
+
+                    <div
+                        class="bg-slate-900 text-white p-4 rounded-xl text-center shadow-lg transform scale-100 transition-transform mt-4">
+                        <p class="text-xs text-gray-400 font-bold uppercase tracking-widest mb-1">বর্তমান পুঁজি (Actual
+                            Capital)</p>
+                        <h2 class="text-4xl font-bold text-green-400">৳ <span id="summary-net">0</span></h2>
+                        <p class="text-[10px] text-gray-500 mt-1">সব খরচ ও লোন বাদ দেওয়ার পর আপনার আসল টাকা</p>
                     </div>
 
                     <div id="result-box"
-                        class="flex justify-between items-center bg-gray-100 p-4 rounded-xl border border-gray-200">
+                        class="flex justify-between items-center bg-gray-100 p-3 rounded-xl border border-gray-200 mt-2">
                         <div>
                             <p class="text-[10px] uppercase font-bold text-gray-500">ফলাফল</p>
-                            <h2 id="status-text" class="text-lg font-bold text-gray-400">---</h2>
+                            <h2 id="status-text" class="text-md font-bold text-gray-400">---</h2>
                         </div>
                         <div class="text-right">
                             <p class="text-[10px] uppercase font-bold text-gray-500">পার্থক্য</p>
-                            <h2 class="text-2xl font-bold text-gray-800">৳ <span id="diff-amount">0</span></h2>
+                            <h2 class="text-xl font-bold text-gray-800">৳ <span id="diff-amount">0</span></h2>
                         </div>
                     </div>
                 </div>
@@ -160,15 +267,78 @@
     </div>
 
     <script>
-        // Load Data Logic
+        // ============================================
+        // YOUR GOOGLE SCRIPT URL HERE
+        // ============================================
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyenmN0-7CC902JP4gFe3xi9IigWwoHHM6OohkcM-U8Sq0VeyHGI42k_koGMt2QDv2vdw/exec";
+        // ============================================
+
+        let expenseList = [];
+
+        function addExpense() {
+            const noteInput = document.getElementById('new-exp-note');
+            const amountInput = document.getElementById('new-exp-amount');
+            const note = noteInput.value.trim() || 'বিবিধ';
+            const amount = parseFloat(amountInput.value);
+
+            if (!amount || amount <= 0) {
+                alert("টাকার পরিমাণ লিখুন");
+                return;
+            }
+            expenseList.push({ note, amount });
+            noteInput.value = '';
+            amountInput.value = '';
+            noteInput.focus();
+            updateExpenseUI();
+        }
+
+        function removeExpense(index) {
+            expenseList.splice(index, 1);
+            updateExpenseUI();
+        }
+
+        function updateExpenseUI() {
+            const ul = document.getElementById('expense-list-ul');
+            const totalDisplay = document.getElementById('expense-total-display');
+            const hiddenInput = document.getElementById('expense');
+
+            ul.innerHTML = '';
+            let total = 0;
+
+            if (expenseList.length === 0) {
+                ul.innerHTML = '<li class="text-[10px] text-gray-400 text-center italic mt-4">কোনো খরচ নেই</li>';
+            } else {
+                expenseList.forEach((item, index) => {
+                    total += item.amount;
+                    const li = document.createElement('li');
+                    li.className = "flex justify-between items-center text-xs border-b border-dashed border-red-100 py-1";
+                    li.innerHTML = `
+                        <span class="text-gray-600 truncate w-2/3">${index + 1}. ${item.note}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="font-bold text-red-500">৳${item.amount}</span>
+                            <button onclick="removeExpense(${index})" class="text-red-300 hover:text-red-500"><i class="fas fa-times"></i></button>
+                        </div>
+                    `;
+                    ul.appendChild(li);
+                });
+            }
+            totalDisplay.innerText = total;
+            hiddenInput.value = total;
+            calculate();
+        }
+
         window.onload = function () {
-            const saved = JSON.parse(localStorage.getItem('cash_register_v2'));
+            const saved = JSON.parse(localStorage.getItem('cash_register_v9'));
             if (saved) {
                 document.getElementById('bkash').value = saved.bkash || '';
                 document.getElementById('personal').value = saved.personal || '';
                 document.getElementById('gp').value = saved.gp || '';
                 document.getElementById('bl').value = saved.bl || '';
                 document.getElementById('cash').value = saved.cash || '';
+                expenseList = saved.expenseList || [];
+                updateExpenseUI();
+                document.getElementById('extra').value = saved.extra || '';
+                document.getElementById('extra-note').value = saved.extra_note || '';
                 document.getElementById('target').value = saved.target || '';
                 calculate();
             }
@@ -176,67 +346,102 @@
 
         function calculate() {
             const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
-
-            const total = getVal('bkash') + getVal('personal') + getVal('gp') + getVal('bl') + getVal('cash');
+            const assets = getVal('bkash') + getVal('personal') + getVal('gp') + getVal('bl') + getVal('cash');
+            const expense = getVal('expense');
+            const extra = getVal('extra');
+            const netCash = (assets + expense) - extra;
             const target = getVal('target');
 
-            // Update Grand Total
-            document.getElementById('grand-total').innerText = total.toLocaleString();
+            // --- HEADER UPDATE ---
+            document.getElementById('physical-total').innerText = assets.toLocaleString();
 
-            // Calculate Difference
-            const diff = total - target;
+            // Logic for Header Deduction Display
+            const headerDeduction = document.getElementById('header-deduction');
+            if (extra > 0) {
+                headerDeduction.classList.remove('hidden');
+                document.getElementById('header-extra').innerText = extra.toLocaleString();
+                document.getElementById('header-own').innerText = (assets - extra).toLocaleString();
+            } else {
+                headerDeduction.classList.add('hidden');
+            }
+
+            // --- REST UPDATE ---
+            document.getElementById('summary-physical').innerText = assets.toLocaleString();
+            document.getElementById('summary-expense').innerText = expense.toLocaleString();
+            document.getElementById('summary-extra').innerText = extra.toLocaleString();
+            document.getElementById('summary-net').innerText = netCash.toLocaleString();
+
+            const diff = netCash - target;
             const diffDisplay = document.getElementById('diff-amount');
             const statusText = document.getElementById('status-text');
-            const statusBadge = document.getElementById('status-badge');
             const resultBox = document.getElementById('result-box');
 
             diffDisplay.innerText = Math.abs(diff).toLocaleString();
 
             if (document.getElementById('target').value === '') {
-                // No target set
-                statusText.innerText = "টার্গেট দিন";
-                statusText.className = "text-lg font-bold text-gray-400";
-                resultBox.className = "flex justify-between items-center bg-gray-100 p-4 rounded-xl border border-gray-200";
-                statusBadge.innerText = "অপেক্ষমান";
+                statusText.innerText = "পুঁজি বসান";
+                statusText.className = "text-md font-bold text-gray-400";
+                resultBox.className = "flex justify-between items-center bg-gray-100 p-3 rounded-xl border border-gray-200 mt-2";
             }
             else if (diff > 0) {
-                // Profit
                 statusText.innerText = "লাভ / বাড়তি";
-                statusText.className = "text-lg font-bold text-green-600";
-                diffDisplay.parentElement.className = "text-2xl font-bold text-green-600";
-                resultBox.className = "flex justify-between items-center bg-green-50 p-4 rounded-xl border border-green-200";
-                statusBadge.innerText = "লাভ হয়েছে";
+                statusText.className = "text-md font-bold text-green-600";
+                resultBox.className = "flex justify-between items-center bg-green-50 p-3 rounded-xl border border-green-200 mt-2";
             }
             else if (diff < 0) {
-                // Loss
-                statusText.innerText = "কম / বাকি";
-                statusText.className = "text-lg font-bold text-red-500";
-                diffDisplay.parentElement.className = "text-2xl font-bold text-red-500";
-                resultBox.className = "flex justify-between items-center bg-red-50 p-4 rounded-xl border border-red-200";
-                statusBadge.innerText = "ক্যাশ শর্ট";
+                statusText.innerText = "কম / লস";
+                statusText.className = "text-md font-bold text-red-500";
+                resultBox.className = "flex justify-between items-center bg-red-50 p-3 rounded-xl border border-red-200 mt-2";
             }
             else {
-                // Equal
                 statusText.innerText = "হিসাব মিলেছে";
-                statusText.className = "text-lg font-bold text-blue-500";
-                diffDisplay.parentElement.className = "text-2xl font-bold text-blue-500";
-                resultBox.className = "flex justify-between items-center bg-blue-50 p-4 rounded-xl border border-blue-200";
-                statusBadge.innerText = "মিলেছে";
+                statusText.className = "text-md font-bold text-blue-500";
+                resultBox.className = "flex justify-between items-center bg-blue-50 p-3 rounded-xl border border-blue-200 mt-2";
+            }
+        }
+
+        function showCongrats(amount) {
+            const overlay = document.getElementById('congrats-overlay');
+            document.getElementById('profit-display').innerText = amount.toLocaleString();
+            if (overlay.classList.contains('hidden')) {
+                overlay.classList.remove('hidden');
+                setTimeout(() => { overlay.classList.add('hidden'); }, 4000);
             }
         }
 
         function saveData() {
+            const expenseNoteString = expenseList.map(e => `${e.note}: ${e.amount}`).join(', ');
             const data = {
                 bkash: document.getElementById('bkash').value,
                 personal: document.getElementById('personal').value,
                 gp: document.getElementById('gp').value,
                 bl: document.getElementById('bl').value,
                 cash: document.getElementById('cash').value,
+                expense: document.getElementById('expense').value,
+                expense_note: expenseNoteString,
+                expenseList: expenseList,
+                extra: document.getElementById('extra').value,
+                extra_note: document.getElementById('extra-note').value,
                 target: document.getElementById('target').value
             };
-            localStorage.setItem('cash_register_v2', JSON.stringify(data));
 
-            // Visual feedback button
+            localStorage.setItem('cash_register_v9', JSON.stringify(data));
+
+            const secretID = localStorage.getItem('ledger_secret_id');
+            if (secretID) {
+                sendReportToCloud(data, secretID);
+            }
+
+            // CHECK FOR PROFIT & SHOW CONGRATS HERE
+            const getVal = (v) => parseFloat(v) || 0;
+            const assets = getVal(data.bkash) + getVal(data.personal) + getVal(data.gp) + getVal(data.bl) + getVal(data.cash);
+            const net = (assets + getVal(data.expense)) - getVal(data.extra);
+            const diff = net - getVal(data.target);
+
+            if (diff > 0) {
+                showCongrats(diff);
+            }
+
             const btn = document.querySelector('button[onclick="saveData()"]');
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-check"></i> সেভ হয়েছে!';
@@ -247,11 +452,44 @@
             }, 2000);
         }
 
+        function sendReportToCloud(data, secretID) {
+            const getVal = (v) => parseFloat(v) || 0;
+            const assets = getVal(data.bkash) + getVal(data.personal) + getVal(data.gp) + getVal(data.bl) + getVal(data.cash);
+            const net = (assets + getVal(data.expense)) - getVal(data.extra);
+            const diff = net - getVal(data.target);
+
+            let status = "Balanced";
+            if (diff > 0) status = "Profit (+ " + diff + ")";
+            if (diff < 0) status = "Short (- " + Math.abs(diff) + ")";
+
+            const payload = {
+                type: 'cash_report',
+                secret_id: secretID,
+                grand_total: net,
+                expense: data.expense || 0,
+                expense_note: data.expense_note || '',
+                extra: data.extra || 0,
+                extra_note: data.extra_note || '',
+                status: status
+            };
+
+            fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                console.log("Report sent");
+            }).catch(err => console.error(err));
+        }
+
         function resetFields() {
             if (confirm('সতর্কতা: সব ডাটা মুছে যাবে!')) {
                 document.querySelectorAll('input').forEach(input => input.value = '');
+                expenseList = [];
+                updateExpenseUI();
                 calculate();
-                localStorage.removeItem('cash_register_v2');
+                localStorage.removeItem('cash_register_v9');
             }
         }
     </script>
