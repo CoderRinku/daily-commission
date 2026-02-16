@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="bn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Cash Register</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f0f2f5;
+        }
+
+        /* Card Focus Effect */
+        .cash-card:focus-within {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-color: #3b82f6;
+        }
+
+        .cash-card {
+            transition: all 0.2s ease-in-out;
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    <div class="min-h-screen flex flex-col items-center max-w-4xl mx-auto bg-white shadow-xl min-h-screen relative">
+
+        <header
+            class="w-full bg-gradient-to-r from-slate-800 to-slate-700 text-white p-6 rounded-b-3xl shadow-lg sticky top-0 z-40">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h1 class="text-sm font-medium opacity-90">বর্তমান মোট ক্যাশ</h1>
+                    <div class="text-4xl font-bold mt-1 text-green-400">৳ <span id="grand-total">0</span></div>
+                </div>
+
+                <a href="index.html"
+                    class="bg-white/10 hover:bg-white/20 px-4 py-2 rounded-full text-sm font-bold transition flex items-center gap-2 backdrop-blur-sm">
+                    <i class="fas fa-home"></i> হোম
+                </a>
+            </div>
+
+            <div class="mt-4 text-xs opacity-80 bg-slate-900/30 p-2 rounded-lg inline-flex">
+                <span><i class="fas fa-calculator"></i> স্ট্যাটাস: <span id="status-badge">হিসাব বাকি</span></span>
+            </div>
+        </header>
+
+        <main class="w-full p-4 flex-grow overflow-y-auto pb-24">
+
+            <h3 class="text-gray-600 font-bold mb-3 ml-1 text-sm uppercase tracking-wide">ব্যালেন্স ইনপুট দিন</h3>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+
+                <div
+                    class="cash-card bg-white border border-pink-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm">
+                    <div
+                        class="w-10 h-10 rounded-full bg-pink-50 flex items-center justify-center text-pink-600 mb-2 text-xl">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div class="text-xs font-bold text-gray-500 mb-1">বিকাশ এজেন্ট</div>
+                    <input type="number" id="bkash" oninput="calculate()" placeholder="0"
+                        class="w-full text-center font-bold text-xl text-gray-800 border-b border-pink-200 focus:outline-none focus:border-pink-500 pb-1">
+                </div>
+
+                <div
+                    class="cash-card bg-white border border-orange-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm">
+                    <div
+                        class="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center text-orange-600 mb-2 text-xl">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="text-xs font-bold text-gray-500 mb-1">পার্সোনাল (নগদ/বিকাশ)</div>
+                    <input type="number" id="personal" oninput="calculate()" placeholder="0"
+                        class="w-full text-center font-bold text-xl text-gray-800 border-b border-orange-200 focus:outline-none focus:border-orange-500 pb-1">
+                </div>
+
+                <div
+                    class="cash-card bg-white border border-blue-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm">
+                    <div
+                        class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-blue-600 mb-2 text-xl">
+                        <i class="fas fa-sim-card"></i>
+                    </div>
+                    <div class="text-xs font-bold text-gray-500 mb-1">GP লোড ব্যালেন্স</div>
+                    <input type="number" id="gp" oninput="calculate()" placeholder="0"
+                        class="w-full text-center font-bold text-xl text-gray-800 border-b border-blue-200 focus:outline-none focus:border-blue-500 pb-1">
+                </div>
+
+                <div
+                    class="cash-card bg-white border border-purple-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm">
+                    <div
+                        class="w-10 h-10 rounded-full bg-purple-50 flex items-center justify-center text-purple-600 mb-2 text-xl">
+                        <i class="fas fa-sim-card"></i>
+                    </div>
+                    <div class="text-xs font-bold text-gray-500 mb-1">BL লোড ব্যালেন্স</div>
+                    <input type="number" id="bl" oninput="calculate()" placeholder="0"
+                        class="w-full text-center font-bold text-xl text-gray-800 border-b border-purple-200 focus:outline-none focus:border-purple-500 pb-1">
+                </div>
+
+                <div
+                    class="cash-card bg-white border border-green-100 p-4 rounded-xl flex flex-col items-center justify-center shadow-sm col-span-2 md:col-span-4 bg-green-50/30">
+                    <div
+                        class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 mb-2 text-2xl">
+                        <i class="fas fa-money-bill-wave"></i>
+                    </div>
+                    <div class="text-sm font-bold text-gray-600 mb-1">দোকানের ক্যাশ ড্রয়ার (Hand Cash)</div>
+                    <input type="number" id="cash" oninput="calculate()" placeholder="0"
+                        class="w-1/2 text-center font-bold text-3xl text-green-700 border-b-2 border-green-300 focus:outline-none focus:border-green-600 pb-1 bg-transparent">
+                </div>
+            </div>
+
+            <div class="bg-white rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+                <div class="bg-gray-50 p-3 border-b border-gray-200">
+                    <h3 class="text-gray-500 text-xs font-bold uppercase flex items-center gap-2">
+                        <i class="fas fa-balance-scale"></i> ক্যাশ মিলান (Reconciliation)
+                    </h3>
+                </div>
+
+                <div class="p-5">
+                    <div class="mb-4 relative">
+                        <label class="text-xs font-bold text-gray-500 mb-1 block">গতকালের ক্যাশ / টার্গেট
+                            এমাউন্ট</label>
+                        <input type="number" id="target" oninput="calculate()"
+                            class="w-full p-3 border-2 border-gray-300 rounded-xl text-xl font-bold focus:border-blue-500 focus:outline-none transition-colors"
+                            placeholder="Example: 50000">
+                        <div class="absolute right-4 top-8 text-gray-400">TK</div>
+                    </div>
+
+                    <div id="result-box"
+                        class="flex justify-between items-center bg-gray-100 p-4 rounded-xl border border-gray-200">
+                        <div>
+                            <p class="text-[10px] uppercase font-bold text-gray-500">ফলাফল</p>
+                            <h2 id="status-text" class="text-lg font-bold text-gray-400">---</h2>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[10px] uppercase font-bold text-gray-500">পার্থক্য</p>
+                            <h2 class="text-2xl font-bold text-gray-800">৳ <span id="diff-amount">0</span></h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex p-4 gap-3 bg-gray-50 border-t border-gray-100">
+                    <button onclick="resetFields()"
+                        class="flex-1 py-3 rounded-xl border border-red-200 text-red-500 font-bold text-sm hover:bg-red-50 transition">
+                        <i class="fas fa-trash-alt"></i> রিসেট
+                    </button>
+                    <button onclick="saveData()"
+                        class="flex-[2] py-3 rounded-xl bg-slate-800 text-white font-bold text-sm hover:bg-slate-700 shadow-lg transition flex justify-center items-center gap-2">
+                        <i class="fas fa-save"></i> সেভ করুন
+                    </button>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // Load Data Logic
+        window.onload = function () {
+            const saved = JSON.parse(localStorage.getItem('cash_register_v2'));
+            if (saved) {
+                document.getElementById('bkash').value = saved.bkash || '';
+                document.getElementById('personal').value = saved.personal || '';
+                document.getElementById('gp').value = saved.gp || '';
+                document.getElementById('bl').value = saved.bl || '';
+                document.getElementById('cash').value = saved.cash || '';
+                document.getElementById('target').value = saved.target || '';
+                calculate();
+            }
+        };
+
+        function calculate() {
+            const getVal = (id) => parseFloat(document.getElementById(id).value) || 0;
+
+            const total = getVal('bkash') + getVal('personal') + getVal('gp') + getVal('bl') + getVal('cash');
+            const target = getVal('target');
+
+            // Update Grand Total
+            document.getElementById('grand-total').innerText = total.toLocaleString();
+
+            // Calculate Difference
+            const diff = total - target;
+            const diffDisplay = document.getElementById('diff-amount');
+            const statusText = document.getElementById('status-text');
+            const statusBadge = document.getElementById('status-badge');
+            const resultBox = document.getElementById('result-box');
+
+            diffDisplay.innerText = Math.abs(diff).toLocaleString();
+
+            if (document.getElementById('target').value === '') {
+                // No target set
+                statusText.innerText = "টার্গেট দিন";
+                statusText.className = "text-lg font-bold text-gray-400";
+                resultBox.className = "flex justify-between items-center bg-gray-100 p-4 rounded-xl border border-gray-200";
+                statusBadge.innerText = "অপেক্ষমান";
+            }
+            else if (diff > 0) {
+                // Profit
+                statusText.innerText = "লাভ / বাড়তি";
+                statusText.className = "text-lg font-bold text-green-600";
+                diffDisplay.parentElement.className = "text-2xl font-bold text-green-600";
+                resultBox.className = "flex justify-between items-center bg-green-50 p-4 rounded-xl border border-green-200";
+                statusBadge.innerText = "লাভ হয়েছে";
+            }
+            else if (diff < 0) {
+                // Loss
+                statusText.innerText = "কম / বাকি";
+                statusText.className = "text-lg font-bold text-red-500";
+                diffDisplay.parentElement.className = "text-2xl font-bold text-red-500";
+                resultBox.className = "flex justify-between items-center bg-red-50 p-4 rounded-xl border border-red-200";
+                statusBadge.innerText = "ক্যাশ শর্ট";
+            }
+            else {
+                // Equal
+                statusText.innerText = "হিসাব মিলেছে";
+                statusText.className = "text-lg font-bold text-blue-500";
+                diffDisplay.parentElement.className = "text-2xl font-bold text-blue-500";
+                resultBox.className = "flex justify-between items-center bg-blue-50 p-4 rounded-xl border border-blue-200";
+                statusBadge.innerText = "মিলেছে";
+            }
+        }
+
+        function saveData() {
+            const data = {
+                bkash: document.getElementById('bkash').value,
+                personal: document.getElementById('personal').value,
+                gp: document.getElementById('gp').value,
+                bl: document.getElementById('bl').value,
+                cash: document.getElementById('cash').value,
+                target: document.getElementById('target').value
+            };
+            localStorage.setItem('cash_register_v2', JSON.stringify(data));
+
+            // Visual feedback button
+            const btn = document.querySelector('button[onclick="saveData()"]');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> সেভ হয়েছে!';
+            btn.classList.add('bg-green-600');
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.classList.remove('bg-green-600');
+            }, 2000);
+        }
+
+        function resetFields() {
+            if (confirm('সতর্কতা: সব ডাটা মুছে যাবে!')) {
+                document.querySelectorAll('input').forEach(input => input.value = '');
+                calculate();
+                localStorage.removeItem('cash_register_v2');
+            }
+        }
+    </script>
+</body>
+
+</html>
