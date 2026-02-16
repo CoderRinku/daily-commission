@@ -1,30 +1,40 @@
 <!DOCTYPE html>
 <html lang="bn">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Daily Business Ledger</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <style>
-        body { font-family: 'Hind Siliguri', sans-serif; background-color: #f0f2f5; }
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #f0f2f5;
+        }
+
         /* Selected Service Style */
-        .service-card.active { 
-            border: 2px solid #2563eb; 
-            background-color: #eff6ff; 
+        .service-card.active {
+            border: 2px solid #2563eb;
+            background-color: #eff6ff;
             transform: scale(1.02);
         }
-        /* Smooth Transition */
-        .service-card { transition: all 0.2s ease-in-out; }
+
+        .service-card {
+            transition: all 0.2s ease-in-out;
+        }
     </style>
 </head>
+
 <body class="text-gray-800">
 
     <div class="min-h-screen flex flex-col items-center max-w-4xl mx-auto bg-white shadow-xl min-h-screen">
-        
-        <header class="w-full bg-gradient-to-r from-blue-700 to-blue-500 text-white p-6 rounded-b-3xl shadow-lg sticky top-0 z-50">
+
+        <header
+            class="w-full bg-gradient-to-r from-blue-700 to-blue-500 text-white p-6 rounded-b-3xl shadow-lg sticky top-0 z-50">
             <div class="flex justify-between items-start">
                 <div>
                     <h1 class="text-sm font-medium opacity-90">আজকের মোট কমিশন (লাভ)</h1>
@@ -35,36 +45,48 @@
                     <p class="font-bold text-lg">৳ <span id="total-amount">0</span></p>
                 </div>
             </div>
-            
+
             <div class="mt-4 flex gap-4 text-xs opacity-90 bg-blue-800/30 p-2 rounded-lg inline-flex">
                 <span><i class="fas fa-list"></i> এন্ট্রি: <span id="txn-count">0</span>টি</span>
             </div>
         </header>
 
         <main class="w-full p-4 flex-grow overflow-y-auto pb-24">
-            
+
             <h3 class="text-gray-600 font-bold mb-3 ml-1 text-sm uppercase tracking-wide">সার্ভিস সিলেক্ট করুন</h3>
-            
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
-                <div onclick="selectService('bkash')" id="btn-bkash" class="service-card active border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 mb-6">
+
+                <div onclick="selectService('bkash')" id="btn-bkash"
+                    class="service-card active border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
                     <div class="text-pink-600 text-3xl mb-2"><i class="fas fa-mobile-alt"></i></div>
                     <div class="font-bold text-gray-700">bKash</div>
-                    <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-full mt-1">কমিশন ৩.৯০/k</p>
+                    <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-full mt-1">কমিশন ৩.৭০/k</p>
                 </div>
 
-                <div onclick="selectService('nagad')" id="btn-nagad" class="service-card border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
+                <div onclick="selectService('nagad')" id="btn-nagad"
+                    class="service-card border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
                     <div class="text-orange-600 text-3xl mb-2"><i class="fas fa-wallet"></i></div>
                     <div class="font-bold text-gray-700">Nagad</div>
-                    <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-full mt-1">কমিশন ৪.০০/k</p>
+                    <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-full mt-1">কমিশন ৪.১০/k</p>
                 </div>
 
-                <div onclick="selectService('flexi')" id="btn-flexi" class="service-card border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
+                <div onclick="selectService('personal')" id="btn-personal"
+                    class="service-card border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
+                    <div class="text-teal-600 text-3xl mb-2"><i class="fas fa-hand-holding-dollar"></i></div>
+                    <div class="font-bold text-gray-700">Personal</div>
+                    <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-full mt-1">কমিশন ১৫.০০/k</p>
+                </div>
+
+                <div onclick="selectService('flexi')" id="btn-flexi"
+                    class="service-card border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
                     <div class="text-purple-600 text-3xl mb-2"><i class="fas fa-sim-card"></i></div>
                     <div class="font-bold text-gray-700">Flexiload</div>
                     <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-full mt-1">কমিশন ২৭.০০/k</p>
                 </div>
 
-                <div onclick="selectService('bill')" id="btn-bill" class="service-card border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
+                <div onclick="selectService('bill')" id="btn-bill"
+                    class="service-card border border-gray-200 p-4 rounded-xl cursor-pointer flex flex-col items-center justify-center h-28 shadow-sm hover:shadow-md">
                     <div class="text-yellow-500 text-3xl mb-2"><i class="fas fa-lightbulb"></i></div>
                     <div class="font-bold text-gray-700">Bill Pay</div>
                     <p class="text-[10px] text-gray-500 bg-gray-100 px-2 py-1 rounded-full mt-1">কমিশন ১০.০০/টি</p>
@@ -75,17 +97,20 @@
                 <label class="text-xs text-gray-500 font-bold mb-1 block ml-1">টাকার পরিমাণ (Amount)</label>
                 <div class="relative">
                     <span class="absolute left-4 top-4 text-gray-400 text-xl font-bold">৳</span>
-                    <input type="number" id="amount" placeholder="0" class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl text-2xl font-bold text-gray-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
+                    <input type="number" id="amount" placeholder="0"
+                        class="w-full pl-10 pr-4 py-3 border-2 border-gray-200 rounded-xl text-2xl font-bold text-gray-800 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500 transition-colors">
                 </div>
-                
-                <button onclick="addTransaction()" class="w-full mt-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-4 rounded-xl shadow-lg transition-transform active:scale-95 flex justify-center items-center gap-2 text-lg">
+
+                <button onclick="addTransaction()"
+                    class="w-full mt-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white font-bold py-4 rounded-xl shadow-lg transition-transform active:scale-95 flex justify-center items-center gap-2 text-lg">
                     <i class="fas fa-plus-circle"></i> হিসাব যোগ করুন
                 </button>
             </div>
 
             <div class="flex justify-between items-center mb-2 px-1 border-b pb-2">
                 <h3 class="text-gray-600 font-bold text-sm">আজকের লেনদেন</h3>
-                <button onclick="resetDay()" class="text-red-500 hover:text-white hover:bg-red-500 text-xs font-bold border border-red-200 px-3 py-1 rounded transition-colors">
+                <button onclick="resetDay()"
+                    class="text-red-500 hover:text-white hover:bg-red-500 text-xs font-bold border border-red-200 px-3 py-1 rounded transition-colors">
                     <i class="fas fa-trash-alt"></i> দিন শেষ করুন
                 </button>
             </div>
@@ -94,34 +119,31 @@
                 <i class="fas fa-clipboard-list text-4xl mb-2 opacity-50"></i>
                 <p>এখনও কোনো লেনদেন নেই</p>
             </div>
-            
+
             <ul id="history-list" class="space-y-3 pb-10">
-                </ul>
+            </ul>
         </main>
     </div>
 
     <script>
         // State Management
         let currentService = 'bkash';
-        // LocalStorage থেকে ডাটা লোড হবে, না থাকলে ফাকা অ্যারে
-        let transactions = JSON.parse(localStorage.getItem('daily_ledger_v2')) || [];
+        let transactions = JSON.parse(localStorage.getItem('daily_ledger_v3')) || []; // Changed key to v3 to force fresh start if needed
 
-        // Commission Rates Configuration
+        // --- UPDATED CONFIGURATION HERE ---
         const rates = {
-            bkash: { type: 'percent', val: 3.90, name: 'bKash', color: 'text-pink-600', bg: 'bg-pink-50' },
-            nagad: { type: 'percent', val: 4.00, name: 'Nagad', color: 'text-orange-600', bg: 'bg-orange-50' },
+            bkash: { type: 'percent', val: 3.70, name: 'bKash', color: 'text-pink-600', bg: 'bg-pink-50' },   // Changed to 3.70
+            nagad: { type: 'percent', val: 4.10, name: 'Nagad', color: 'text-orange-600', bg: 'bg-orange-50' }, // Changed to 4.10
+            personal: { type: 'percent', val: 15.00, name: 'Personal', color: 'text-teal-600', bg: 'bg-teal-50' }, // Added 15.00
             flexi: { type: 'percent', val: 27.00, name: 'Flexiload', color: 'text-purple-600', bg: 'bg-purple-50' },
-            bill:  { type: 'flat',    val: 10.00, name: 'Bill Pay', color: 'text-yellow-600', bg: 'bg-yellow-50' }
+            bill: { type: 'flat', val: 10.00, name: 'Bill Pay', color: 'text-yellow-600', bg: 'bg-yellow-50' }
         };
 
         // Service Selector Function
         function selectService(service) {
             currentService = service;
-            // Remove active class from all
             document.querySelectorAll('.service-card').forEach(el => el.classList.remove('active'));
-            // Add active class to clicked
             document.getElementById('btn-' + service).classList.add('active');
-            // Auto focus input
             document.getElementById('amount').focus();
         }
 
@@ -131,7 +153,7 @@
             const amount = parseFloat(amountInput.value);
 
             if (!amount || amount <= 0) {
-                alert("দয়া করে সঠিক টাকার পরিমাণ লিখুন!");
+                alert("দয়া করে সঠিক টাকার পরিমাণ লিখুন!");
                 return;
             }
 
@@ -140,31 +162,30 @@
             const rateInfo = rates[currentService];
 
             if (rateInfo.type === 'percent') {
-                // (Amount / 1000) * Rate
+                // Calculation: (Amount / 1000) * Rate
                 commission = (amount / 1000) * rateInfo.val;
             } else {
-                // Flat rate (Bill Pay)
                 commission = rateInfo.val;
             }
 
             const newTxn = {
-                id: Date.now(), // Unique ID for deleting later
+                id: Date.now(),
                 service: currentService,
                 amount: amount,
                 commission: commission,
                 time: new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })
             };
 
-            transactions.unshift(newTxn); // Add to top of list
+            transactions.unshift(newTxn);
             saveAndRender();
-            
-            amountInput.value = ''; // Clear input
+
+            amountInput.value = '';
             amountInput.focus();
         }
 
         // Delete Single Transaction
         function deleteTxn(id) {
-            if(confirm("আপনি কি শুধু এই এন্ট্রিটি মুছে ফেলতে চান?")) {
+            if (confirm("আপনি কি শুধু এই এন্ট্রিটি মুছে ফেলতে চান?")) {
                 transactions = transactions.filter(txn => txn.id !== id);
                 saveAndRender();
             }
@@ -172,7 +193,7 @@
 
         // Reset Whole Day
         function resetDay() {
-            if(confirm('সতর্কতা: পুরো দিনের সব হিসাব মুছে যাবে। আপনি কি নিশ্চিত?')) {
+            if (confirm('সতর্কতা: পুরো দিনের সব হিসাব মুছে যাবে। আপনি কি নিশ্চিত?')) {
                 transactions = [];
                 saveAndRender();
             }
@@ -180,13 +201,14 @@
 
         // Save to LocalStorage & Update UI
         function saveAndRender() {
-            localStorage.setItem('daily_ledger_v2', JSON.stringify(transactions));
-            
+            // Using new key 'daily_ledger_v3' to avoid conflict with old data
+            localStorage.setItem('daily_ledger_v3', JSON.stringify(transactions));
+
             const list = document.getElementById('history-list');
             const emptyState = document.getElementById('empty-state');
-            
+
             list.innerHTML = '';
-            
+
             let totalComm = 0;
             let totalAmnt = 0;
 
@@ -202,9 +224,12 @@
 
                 const info = rates[txn.service];
 
+                // Fallback protection
+                if (!info) return;
+
                 const li = document.createElement('li');
                 li.className = "bg-white border border-gray-100 rounded-xl p-4 shadow-sm flex justify-between items-center relative group";
-                
+
                 li.innerHTML = `
                     <div class="flex items-center gap-3">
                         <div class="w-12 h-12 rounded-full ${info.bg} flex items-center justify-center text-lg font-bold ${info.color}">
@@ -228,7 +253,6 @@
                 list.appendChild(li);
             });
 
-            // Update Header Totals
             document.getElementById('total-commission').innerText = totalComm.toFixed(2);
             document.getElementById('total-amount').innerText = totalAmnt.toLocaleString();
             document.getElementById('txn-count').innerText = transactions.length;
@@ -236,9 +260,10 @@
 
         // Helper for Icons
         function getIcon(service) {
-            if(service === 'bkash') return 'fas fa-mobile-alt';
-            if(service === 'nagad') return 'fas fa-wallet';
-            if(service === 'flexi') return 'fas fa-sim-card';
+            if (service === 'bkash') return 'fas fa-mobile-alt';
+            if (service === 'nagad') return 'fas fa-wallet';
+            if (service === 'personal') return 'fas fa-hand-holding-dollar';
+            if (service === 'flexi') return 'fas fa-sim-card';
             return 'fas fa-lightbulb';
         }
 
@@ -246,4 +271,5 @@
         saveAndRender();
     </script>
 </body>
+
 </html>
